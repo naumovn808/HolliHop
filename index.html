@@ -1,12 +1,35 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Employees</title>
-</head>
-<body>
-  <ul id="employeeList"></ul>
-  <script src="app.js"></script>
-</body>
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Employees</title>
+    <link rel="stylesheet" href="./style.css">
+  </head>
+  <body>
+    <div class="wrapper">
+      <ul id="employeeList">
+        <li>ФИО Родителя<span class="nameParent"></span><span class="parentNumber"></span></li>
+        <li>ФИО Ребенка<span class="nameChild"></span></li>
+        <li>Название курса<span class="nameCourse"></span></li>
+        <li>Название группы<span class="nameGrorup"></span></li>
+        <li>Кто преподаватель<span class="nameTeacher"></span></li>
+        <li>Даты последних(планируемых) 8 занятий у ГРУППЫ<span
+            class="datePlan"></span></li>
+        <li>Фактические посещения студентом последних 8 занятий<span
+            class="dateVisit"></span></li>
+        <li>Оценка успеваемости по 8 последним занятиям<span
+            class="performance"></span></li>
+        <li>Ссылка на гитхаб ученика<a class="linkGit"></a></li>
+        <li>Комментарий преподавателя<span class="comment"></span></li>
+      </ul>
+      <form class="form">
+        <span class="formError"></span>
+        <label for="id">введите айди ребенка</label>
+        <input class="input" id="id" type="number">
+        <button class="formButton">Найти</button>
+      </form>
+    </div>
+    <script src="./app.js"></script>
+  </body>
 </html>
