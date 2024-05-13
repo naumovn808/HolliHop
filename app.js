@@ -42,7 +42,7 @@ function getDays(student) {
 
     dateVisit.innerHTML = `
     ${arr.map(e => {
-      return `<span>${e.Date} - ${e.Pass ? 'пропустил' : 'посетил'}</span>`
+      return `<span>${e.Date} - ${e.Pass ? ' пропустил' : ' посетил'}</span>`
     }).join('')}
     
     `
@@ -64,7 +64,6 @@ function checkDateRange() {
 
   }
 }
-
 
 function updateStudentParent(student) {
 
@@ -126,7 +125,6 @@ function updateStudentLink(student) {
     linkGit.textContent = notData;
   }
 }
-
 
 function updateGroupName(student) {
 
@@ -238,9 +236,22 @@ function generatePdf() {
 
   let docDefinition = {
     content: [
-      `
+    `
+    ФИО Ребенка:  ${studentName.textContent}
     ФИО Родителя:   ${nameParent.textContent}
-    Номер Родителя  ${parentNumber.textContent}
+    Номер Родителя:  ${parentNumber.textContent}
+    Название курса:  ${nameCourse.textContent}
+    Название группы:  ${nameGroup.textContent}
+    Кто преподаватель:  ${nameTeacher.textContent}
+    Даты последних(планируемых) 8 занятий у ГРУППЫ:
+    Оценка успеваемости по 8 последним занятиям:  
+    дата начала и конца обучения:  ${startEndDate.textContent}
+    Ссылка на гитхаб ученика:   ${linkGit.textContent}
+    Комментарий преподавателя:
+
+
+    Фактические посещения студентом последних 8 занятий
+  ${dateVisit.textContent}
 
     `
     ]
