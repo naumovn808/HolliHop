@@ -10,6 +10,8 @@ const nameGroup = document.querySelector('.nameGrorup');
 const nameTeacher = document.querySelector('.nameTeacher');
 const startEndDate = document.querySelector('.start-end-date');
 const dateVisit = document.querySelector('.dateVisit');
+const commentTeacher = document.querySelector('.comment');
+const performance = document.querySelector('.performance');
 const btnPdf = document.querySelector('.pdf__btn');
 const notData = 'нет данных';
 
@@ -35,6 +37,7 @@ function updateBeginEndTime(student) {
 }
 
 function getDays(student) {
+  console.log('days', student[0]);
   if (student[0]?.Days) {
     console.log(student[0]?.Days);
 
@@ -42,7 +45,7 @@ function getDays(student) {
 
     dateVisit.innerHTML = `
     ${arr.map(e => {
-      return `<span>${e.Date} - ${e.Pass ? ' пропустил' : ' посетил'}</span>`
+      return `<span>${e.Date} - ${e.Pass ? ' пропустил ' : ' посетил '}</span>`
     }).join('')}
     
     `
@@ -76,6 +79,7 @@ function updateStudentParent(student) {
     let fullName = [firstName, middleName, lastName].filter(Boolean).join(' ');
     nameParent.textContent = fullName.trim();
     parentNumber.textContent = mobileNumber;
+    console.log(fullName, mobileNumber);
   }
   else {
     nameParent.textContent = notData;
@@ -97,6 +101,7 @@ function updateStudentName(student) {
     let lastName = student.LastName || '';
     let fullName = [firstName, lastName].join(' ');
     studentName.textContent = fullName.trim();
+    console.log(fullName.trim());
   } else {
     studentName.textContent = notData;
   }
@@ -109,6 +114,7 @@ function updateStudentDisciplines(student) {
     let discipline = student[0].EdUnitDiscipline;
 
     nameCourse.textContent = discipline;
+    console.log(discipline);
   } else {
     nameCourse.textContent = notData;
   }
@@ -121,6 +127,7 @@ function updateStudentLink(student) {
 
     linkGit.textContent = ' ' + link;
     linkGit.href = link;
+    console.log(link);
   } else {
     linkGit.textContent = notData;
   }
@@ -134,12 +141,15 @@ function updateGroupName(student) {
 
     nameGroup.textContent = str[0];
     nameTeacher.textContent = str[1]?.replace(/\(|\)/g, " ");
-
+    console.log(' имя группы и учителя', str);
   } else {
     nameGroup.textContent = notData;
     nameTeacher.textContent = notData;
   }
 }
+
+
+
 
 function handleResponse(data) {
 
@@ -177,6 +187,25 @@ function handleResponse3(data) {
 
 }
 
+function handleResponse4(data) {
+
+  if (data && data.EdUnitStudentReports) {
+    console.log(data.EdUnitStudentReports[0]);
+    commentTeacher.textContent = data.EdUnitStudentReports[0].CommentHtml;
+    console.log(data.EdUnitStudentReports[0].Criterions);
+    const arrPerformance = data.EdUnitStudentReports[0].Criterions;
+
+    arrPerformance.forEach(item => {
+      performance.innerHTML += `${item.CriterionName} - ${item.Value}  <br>`;
+    });
+
+  } else {
+    commentTeacher.textContent = notData;
+    performance = notData;
+  }
+
+}
+
 function fetchJSONP(url, callbackName) {
   const script = document.createElement('script');
   script.src = `${url}&callback=${callbackName}`;
@@ -192,11 +221,13 @@ input.addEventListener('change', (e) => {
 
 const apiUrl = 'https://it-academy.t8s.ru/Api/V2/GetStudents';
 const apiUrl2 = 'https://it-academy.t8s.ru/Api/V2/GetEdUnitStudents';
+const apiUrl3 = 'https://it-academy.t8s.ru/Api/V2/GetEdUnitStudentReports';
 
 const authkey = 'WuLyujCFtTDaxq4MorahbYMnYBsWJa823uwSla62X4olBglySpRyXjTLmLvEMBfW';
 const callbackName = 'handleResponse';
 const callbackName2 = 'handleResponse2';
 const callbackName3 = 'handleResponse3';
+const callbackName4 = 'handleResponse4';
 
 
 form.addEventListener('submit', (e) => {
@@ -216,10 +247,11 @@ form.addEventListener('submit', (e) => {
 
   fetchJSONP(`${apiUrl}?authkey=${encodeURIComponent(authkey)}&Id=${studentId}`, callbackName);
 
+
   setTimeout(() => {
     fetchJSONP(`${apiUrl2}?authkey=${encodeURIComponent(authkey)}&studentClientId=${clientId}`, callbackName2);
 
-
+    fetchJSONP(`${apiUrl3}?authkey=${encodeURIComponent(authkey)}&studentClientId=${clientId}`, callbackName4);
   }, 1000)
 
   setTimeout(() => {
@@ -236,19 +268,18 @@ function generatePdf() {
 
   let docDefinition = {
     content: [
-    `
+      `
     ФИО Ребенка:  ${studentName.textContent}
     ФИО Родителя:   ${nameParent.textContent}
     Номер Родителя:  ${parentNumber.textContent}
     Название курса:  ${nameCourse.textContent}
     Название группы:  ${nameGroup.textContent}
     Кто преподаватель:  ${nameTeacher.textContent}
-    Даты последних(планируемых) 8 занятий у ГРУППЫ:
-    Оценка успеваемости по 8 последним занятиям:  
+    Даты последних(планируемых) 8 занятий у ГРУППЫ:  
     дата начала и конца обучения:  ${startEndDate.textContent}
     Ссылка на гитхаб ученика:   ${linkGit.textContent}
-    Комментарий преподавателя:
-
+    Комментарий преподавателя:  ${commentTeacher.textContent}
+    Оценка успеваемости по 8 последним занятиям :   ${performance.textContent}
 
     Фактические посещения студентом последних 8 занятий
   ${dateVisit.textContent}
